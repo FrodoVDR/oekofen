@@ -1,0 +1,319 @@
+#!/bin/sh
+# -*- sh -*-
+. $MUNIN_LIBDIR/plugins/plugin.sh
+
+sensor=${0##*/heizung_}
+if [ -z "$sensor" -o "$sensor" = "multi" ]
+then
+	# multigraph asked
+	MULTI=1
+fi
+
+if [ "$1" = "autoconf" ]; then
+    if [ ! -d /mnt/nas01 ]; then
+        echo "no (could not found /mnt/nas01) as user $(whoami))"
+        exit 0
+    else
+        echo yes
+        exit 0
+    fi
+fi
+
+# this is flawed, vcgencmd always returns with RC 0.  Needs expanding.
+if [ "$1" = "suggest" ]; then
+    echo temp
+    exit 0
+fi
+
+if [ "$1" = "config" ]; then
+
+    if [ ! -z "$MULTI" -o "$sensor" = "temp" ]
+    then
+        [ ! -z "$MULTI" ] && echo "multigraph heizung_temp"
+        echo "graph_title OekoFen Pelletronic Temperaturen"
+        echo "graph_args --base 1000"
+        echo "graph_vlabel degrees Celsius"
+        echo "graph_category heizung"
+        echo "temp0.label Aussentemp."
+        echo "temp0.min -30"
+	echo "temp0.max 50"
+        echo "temp1.label Kesseltemp.Ist"
+        echo "temp1.min 0"
+        echo "temp2.label Kesseltemp.Soll"
+        echo "temp2.min 0"
+        echo "temp3.label HK1 VLtemp.Ist"
+        echo "temp3.min 0"
+        echo "temp4.label HK1 VLtemp.Soll"
+        echo "temp4.min 0"
+        echo "temp5.label WW1 Ist"
+        echo "temp5.min 0"
+        echo "temp6.label WW1 Soll"
+        echo "temp6.min 0"
+        echo "temp7.label TPO1 Ist"
+        echo "temp7.min 0"
+        echo "temp8.label TPO1 Soll"
+        echo "temp8.min 0"
+        echo "temp9.label TPM1 Ist"
+        echo "temp9.min 0"
+        echo "temp10.label TPM1 Soll"
+        echo "temp10.min 0"
+        echo "temp11.label SO1 Kollektortemp."
+        echo "temp11.min -30"
+        echo "temp12.label SO1 Speicher unten 1"
+        echo "temp12.min 0"
+    fi
+
+    if [ ! -z "$MULTI" -o "$sensor" = "speicher" ]
+    then
+        [ ! -z "$MULTI" ] && echo "multigraph heizung_temp"
+        echo "graph_title OekoFen Pelletronic Temperaturen Speicher"
+        echo "graph_args --base 1000"
+        echo "graph_vlabel degrees Celsius"
+        echo "graph_category heizung"
+#        echo "temp0.label Aussentemp."
+#        echo "temp0.min -30"
+#        echo "temp0.max 50"
+#        echo "temp1.label Kesseltemp.Ist"
+#        echo "temp1.min 0"
+#        echo "temp2.label Kesseltemp.Soll"
+#        echo "temp2.min 0"
+#        echo "temp3.label HK1 VLtemp.Ist"
+#        echo "temp3.min 0"
+#        echo "temp4.label HK1 VLtemp.Soll"
+#        echo "temp4.min 0"
+        echo "temp5.label WW1 Ist"
+        echo "temp5.min 0"
+#        echo "temp6.label WW1 Soll"
+#        echo "temp6.min 0"
+        echo "temp7.label TPO1 Ist"
+        echo "temp7.min 0"
+#        echo "temp8.label TPO1 Soll"
+#        echo "temp8.min 0"
+        echo "temp9.label TPM1 Ist"
+        echo "temp9.min 0"
+#        echo "temp10.label TPM1 Soll"
+#        echo "temp10.min 0"
+#        echo "temp11.label SO1 Kollektortemp."
+#        echo "temp11.min -30"
+        echo "temp12.label SO1 Speicher unten 1"
+        echo "temp12.min 0"
+    fi
+
+    if [ ! -z "$MULTI" -o "$sensor" = "steuerung" ]
+    then
+        [ ! -z "$MULTI" ] && echo "multigraph heizung_steuerung"
+        echo "graph_title OekoFen Pelletronic Steuerung"
+        echo "graph_args -l 0"
+	echo "graph_scale no"
+        echo "graph_category heizung"
+        echo "steuerung0.label Brenneranf.I/O BOX 1"
+        echo "steuerung0.min 0"
+	echo "steuerung0.type GAUGE"
+        echo "steuerung1.label HK1 Pumpe"
+        echo "steuerung1.min 0"
+	echo "steuerung1.type GAUGE"
+        echo "steuerung2.label SO1 Solarpumpe1"
+        echo "steuerung2.min 0"
+	echo "steuerung2.type GAUGE"
+#        echo "steuerung3.label WW1 Pumpe"
+#        echo "steuerung3.min 0"
+#        echo "steuerung3.type GAUGE"
+    fi
+
+    if [ ! -z "$MULTI" -o "$sensor" = "solar" ]
+    then
+        [ ! -z "$MULTI" ] && echo "multigraph heizung_solar"
+        echo "graph_title OekoFen Pelletronic Solar"
+        echo "graph_args --upper-limit 100 -l 0"
+        echo "graph_scale no"
+        echo "graph_category heizung"
+        echo "solar1.label SO1 Drehzahl [%]"
+        echo "solar1.min 0"
+        echo "solar2.label SO1 Kollektortemp. [C]"
+        echo "solar2.min -30"
+        echo "solar3.label SO1 Speicher unten 1 [C]"
+        echo "solar3.min 0"
+        echo "solar4.label Aussentemp. [C]"
+        echo "solar4.min -30"
+    fi
+
+    if [ ! -z "$MULTI" -o "$sensor" = "brenner" ]
+    then
+        [ ! -z "$MULTI" ] && echo "multigraph heizung_brenner"
+        echo "graph_title OekoFen Pelletronic Brenner"
+        echo "graph_args --upper-limit 100 -l 0"
+        echo "graph_scale no"
+        echo "graph_category heizung"
+        echo "temp0.label Aussentemp."
+        echo "temp0.min -30"
+        echo "temp1.label Kesseltemp.Ist"
+        echo "temp1.min 0"
+        echo "temp2.label Kesseltemp.Soll"
+        echo "temp2.min 0"
+        echo "temp3.label HK1 VLtemp.Ist"
+        echo "temp3.min 0"
+        echo "temp4.label HK1 VLtemp.Soll"
+        echo "temp4.min 0"
+        echo "temp5.label WW1 Ist"
+        echo "temp5.min 0"
+#        echo "temp6.label WW1 Soll"
+#        echo "temp6.min 0"
+#        echo "temp7.label TPO1 Ist"
+#        echo "temp7.min 0"
+#        echo "temp8.label TPO1 Soll"
+#        echo "temp8.min 0"
+#        echo "temp9.label TPM1 Ist"
+#        echo "temp9.min 0"
+#        echo "temp10.label TPM1 Soll"
+#        echo "temp10.min 0"
+#        echo "temp11.label SO1 Kollektortemp."
+#        echo "temp11.min -30"
+#        echo "temp12.label SO1 Speicher unten 1"
+#        echo "temp12.min 0"
+
+    fi
+    exit 0
+fi
+
+for i in $(ls -1 /tmp/pelletlog_*.csv); do file=$i; done
+test=$(tail -1 $file | grep Kessel)
+if [ $? -eq 0 ]; then 
+    exit 0
+fi
+
+if [ ! -z "$MULTI" -o "$sensor" = "temp" ]
+then
+    [ ! -z "$MULTI" ] && echo "multigraph heizung_temp"
+    temp0=$(tail -1 $file | awk -F';' '{ print $3 }' | sed -e 's/,/./g')
+    echo "temp0.value $temp0"
+    temp1=$(tail -1 $file | awk -F';' '{ print $4 }' | sed -e 's/,/./g')
+    echo "temp1.value $temp1"
+    temp2=$(tail -1 $file | awk -F';' '{ print $5 }' | sed -e 's/,/./g')
+    echo "temp2.value $temp2"
+    temp3=$(tail -1 $file | awk -F';' '{ print $6 }' | sed -e 's/,/./g')
+    echo "temp3.value $temp3"
+    temp4=$(tail -1 $file | awk -F';' '{ print $7 }' | sed -e 's/,/./g')
+    echo "temp4.value $temp4"
+    temp5=$(tail -1 $file | awk -F';' '{ print $8 }' | sed -e 's/,/./g')
+    echo "temp5.value $temp5"
+    temp6=$(tail -1 $file | awk -F';' '{ print $9 }' | sed -e 's/,/./g')
+    echo "temp6.value $temp6"
+    temp7=$(tail -1 $file | awk -F';' '{ print $10 }' | sed -e 's/,/./g')
+    echo "temp7.value $temp7"
+    temp8=$(tail -1 $file | awk -F';' '{ print $11 }' | sed -e 's/,/./g')
+    echo "temp8.value $temp8"
+    temp9=$(tail -1 $file | awk -F';' '{ print $12 }' | sed -e 's/,/./g')
+    echo "temp9.value $temp9"
+    temp10=$(tail -1 $file | awk -F';' '{ print $13 }' | sed -e 's/,/./g')
+    echo "temp10.value $temp10"
+    temp11=$(tail -1 $file | awk -F';' '{ print $14 }' | sed -e 's/,/./g')
+    echo "temp11.value $temp11"
+    temp12=$(tail -1 $file | awk -F';' '{ print $15 }' | sed -e 's/,/./g')
+    echo "temp12.value $temp12"
+fi
+
+if [ ! -z "$MULTI" -o "$sensor" = "speicher" ]
+then
+    [ ! -z "$MULTI" ] && echo "multigraph heizung_speicher"
+#    temp0=$(tail -1 $file | awk -F';' '{ print $3 }' | sed -e 's/,/./g')
+#    echo "temp0.value $temp0"
+#    temp1=$(tail -1 $file | awk -F';' '{ print $4 }' | sed -e 's/,/./g')
+#    echo "temp1.value $temp1"
+#    temp2=$(tail -1 $file | awk -F';' '{ print $5 }' | sed -e 's/,/./g')
+#    echo "temp2.value $temp2"
+#    temp3=$(tail -1 $file | awk -F';' '{ print $6 }' | sed -e 's/,/./g')
+#    echo "temp3.value $temp3"
+#    temp4=$(tail -1 $file | awk -F';' '{ print $7 }' | sed -e 's/,/./g')
+#    echo "temp4.value $temp4"
+    temp5=$(tail -1 $file | awk -F';' '{ print $8 }' | sed -e 's/,/./g')
+    echo "temp5.value $temp5"
+#    temp6=$(tail -1 $file | awk -F';' '{ print $9 }' | sed -e 's/,/./g')
+#    echo "temp6.value $temp6"
+    temp7=$(tail -1 $file | awk -F';' '{ print $10 }' | sed -e 's/,/./g')
+    echo "temp7.value $temp7"
+#    temp8=$(tail -1 $file | awk -F';' '{ print $11 }' | sed -e 's/,/./g')
+#    echo "temp8.value $temp8"
+    temp9=$(tail -1 $file | awk -F';' '{ print $12 }' | sed -e 's/,/./g')
+    echo "temp9.value $temp9"
+#    temp10=$(tail -1 $file | awk -F';' '{ print $13 }' | sed -e 's/,/./g')
+#    echo "temp10.value $temp10"
+#    temp11=$(tail -1 $file | awk -F';' '{ print $14 }' | sed -e 's/,/./g')
+#    echo "temp11.value $temp11"
+    temp12=$(tail -1 $file | awk -F';' '{ print $15 }' | sed -e 's/,/./g')
+    echo "temp12.value $temp12"
+fi
+
+if [ ! -z "$MULTI" -o "$sensor" = "steuerung" ]
+then
+    [ ! -z "$MULTI" ] && echo "multigraph heizung_steuerung"
+    # Brenneranf.I/O BOX 1
+    steuerung0=$(tail -1 $file | awk -F';' '{ print $16 }' | sed -e 's/,/./g')
+    if [ $steuerung0 -eq 0 ] ; then
+    	steuerung0=0
+    else
+        steuerung0=10
+    fi
+    echo "steuerung0.value $steuerung0"
+    # HK1 Pumpe 
+    steuerung1=$(tail -1 $file | awk -F';' '{ print $20 }' | sed -e 's/,/./g')
+    if [ $steuerung1 -eq 0 ] ; then
+        steuerung1=0
+    else
+        steuerung1=20
+    fi
+    echo "steuerung1.value $steuerung1"
+    # SO1 Solarpumpe1 [0/1]
+    steuerung2=$(tail -1 $file | awk -F';' '{ print $18 }' | sed -e 's/,/./g')
+    if [ $steuerung2 -eq 0 ] ; then
+        steuerung2=0
+    else
+        steuerung2=30
+    fi
+    echo "steuerung2.value $steuerung2"
+#    # WW1 Pumpe
+#    steuerung3=$(tail -1 $file | awk -F';' '{ print $21 }' | sed -e 's/,/./g')
+#    if [ $steuerung3 -eq 0 ] ; then
+#        steuerung3=0
+#    else
+#        steuerung3=40
+#    fi
+#    echo "steuerung3.value $steuerung3"
+
+fi
+
+if [ ! -z "$MULTI" -o "$sensor" = "solar" ]
+then
+    [ ! -z "$MULTI" ] && echo "multigraph heizung_solar"
+    # SO1 Solarpumpe1 [0/1]
+#    solar0=$(tail -1 $file | awk -F';' '{ print $18 }' | sed -e 's/,/./g')
+#    solar0=`expr $solar0 \* 100`
+#    echo "solar0.value $solar0"
+    # SO1 Drehzahl [%]
+    solar1=$(tail -1 $file | awk -F';' '{ print $19 }' | sed -e 's/,/./g')
+    echo "solar1.value $solar1"
+    # SO1 Kollektortemp. [°C]"
+    solar2=$(tail -1 $file | awk -F';' '{ print $14 }' | sed -e 's/,/./g')
+    echo "solar2.value $solar2"
+    # SO1 Speicher unten 1 [°C]"
+    solar3=$(tail -1 $file | awk -F';' '{ print $15 }' | sed -e 's/,/./g')
+    echo "solar3.value $solar3"
+    solar4=$(tail -1 $file | awk -F';' '{ print $3 }' | sed -e 's/,/./g')
+    echo "solar4.value $solar4"
+fi
+
+if [ ! -z "$MULTI" -o "$sensor" = "brenner" ]
+then
+    [ ! -z "$MULTI" ] && echo "multigraph heizung_brenner"
+    temp0=$(tail -1 $file | awk -F';' '{ print $3 }' | sed -e 's/,/./g')
+    echo "temp0.value $temp0"
+    temp1=$(tail -1 $file | awk -F';' '{ print $4 }' | sed -e 's/,/./g')
+    echo "temp1.value $temp1"
+    temp2=$(tail -1 $file | awk -F';' '{ print $5 }' | sed -e 's/,/./g')
+    echo "temp2.value $temp2"
+    temp3=$(tail -1 $file | awk -F';' '{ print $6 }' | sed -e 's/,/./g')
+    echo "temp3.value $temp3"
+    temp4=$(tail -1 $file | awk -F';' '{ print $7 }' | sed -e 's/,/./g')
+    echo "temp4.value $temp4"
+    temp5=$(tail -1 $file | awk -F';' '{ print $8 }' | sed -e 's/,/./g')
+    echo "temp5.value $temp5"
+fi
